@@ -9,6 +9,7 @@ export const fetchUserInfo = createAsyncThunk(
 const initialState = {
   authorized: false,
   access_token: "",
+  status: "Not Authorized",
   user_info: {
     username: "",
   },
@@ -20,15 +21,15 @@ export const discordSlice = createSlice({
   reducers: {},
   extraReducers: {
     [fetchUserInfo.pending](state) {
-      state.user_info.username = "loading";
+      state.status = "Loading";
     },
     [fetchUserInfo.fulfilled](state, action) {
-      console.log(action.payload);
+      state.status = "Loaded";
       state.user_info = { ...action.payload };
-      console.log(state.user_info);
+      state.authorized = true;
     },
     [fetchUserInfo.rejected](state) {
-      state.user_info.username = "no result";
+      state.status = "Failed";
     },
   },
 });

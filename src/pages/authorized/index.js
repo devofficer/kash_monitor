@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { fetchUserInfo } from "../../store/slices/discordSlice";
 
 export default function Authorized() {
   const [params] = useSearchParams();
-  const user_info = useSelector((state) => state.discord.user_info);
+  const status = useSelector((state) => state.discord.status);
+  const authorized = useSelector((state) => state.discord.authorized);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const access_token = params.get(process.env.REACT_APP_DISCORD_ACCESS_TOKEN);
@@ -14,12 +16,15 @@ export default function Authorized() {
     dispatch(fetchUserInfo(access_token));
   }, []);
 
+  useEffect(() => {
+    if (!authorized) return;
+    navigate("/dashboard");
+  }, [authorized]);
+
   return (
     <div>
       <h1>Authorized</h1>
-      <b>
-        {user_info?.username}#{user_info?.discriminator}
-      </b>
+      <b>{status}</b>
     </div>
   );
 }
